@@ -1,0 +1,28 @@
+{
+    "manifest_version": 3,
+    "name": "GitHub Profile Analyzer Chrome Extension",
+    "version": "0.0.0.1",
+    "description": "A React app as a Chrome extension",
+    "permissions": [
+      "storage",
+      "activeTab",
+      "tabs"
+    ],
+    "background": {
+      "service_worker": "src/app.jsx"
+    },
+    "action": {
+      "default_popup": "index.html",
+      "default_icon": {
+        "16": "public/icons/icon16.png",
+        "48": "public/icons/icon48.png",
+        "128": "public/icons/icon128.png"
+      }
+    },
+    "icons": {
+      "16": "public/icons/icon16.png",
+      "48": "public/icons/icon48.png",
+      "128": "public/icons/icon128.png"
+    }
+  }
+  

@@ -21,7 +21,7 @@ function App() {
   }
 
   return (
-    <div className='text-white bg-zinc-800 w-[50vw]  py-[2rem] px-[3rem]'>
+    <div className='text-white bg-zinc-800 w-[50vw] h-[100vh] py-[2rem] px-[3rem] overflow-y-auto'>
       <SearchForm user={user} setUser={setUser} SearchUser={SearchUser} />
       <UserRepos user={user} userRepos={userRepos} />
     </div>

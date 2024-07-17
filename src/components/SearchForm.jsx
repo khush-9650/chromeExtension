@@ -3,13 +3,13 @@ import React from 'react';
 function SearchForm({ user, setUser, SearchUser }) {
   return (
     <form
-      className="flex text-black w-[55%] h-[6.5%] justify-between py-1 px-2 rounded-md bg-white m-auto border-3 border-red-500"
+      className="flex text-black w-[80%] h-[6.5%] justify-between py-1 px-2 rounded-md bg-white m-auto border-3 border-red-500"
       onSubmit={SearchUser}
     >
       <input
         type="text"
         className="h-full outline-none text-xl font-medium py-2 px-4 w-[85%]"
-        placeholder="Enter GitHub username"
+        placeholder="Enter GitHub sername"
         value={user}
         onChange={(e) => setUser(e.target.value)}
       />
