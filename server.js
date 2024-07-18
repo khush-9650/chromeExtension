@@ -26,7 +26,7 @@ app.post('/api/getTechInfo', async (req, res) => {
         }, {
             headers: {
                 ' Key': 'Authorization',
-                'Value': 'Bearer sk-proj-Tyzydp8I9gQvVvlExLpLT3BlbkFJwEwGydrP7RzdxrN7hGrs',
+                'Value': 'Bearer ${apiKey}',
                 'Content-Type': 'application/json'
             }
         });
