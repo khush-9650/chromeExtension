@@ -1,50 +1,43 @@
 import express from 'express';
-import axios from 'axios';
 import cors from 'cors';
+import { Configuration, OpenAIApi } from 'openai';
+import dotenv from 'dotenv';
+
+// Load environment variables from .env file
+dotenv.config();
 
 const app = express();
-const port = 3000;
+const port = 5000;
 
-// Enable CORS
 app.use(cors());
-
-// Middleware to parse JSON bodies
 app.use(express.json());
 
-app.get('/', (req, res) => {
-    res.send('Server is running!');
+const configuration = new Configuration({
+  apiKey: process.env.OPENAI_API_KEY,
 });
+const openai = new OpenAIApi(configuration);
 
-app.post('/api/getTechInfo', async (req, res) => {
-    const { username } = req.body;
+app.post('/api/sendMsgToOpenAI', async (req, res) => {
+  const { message } = req.body;
 
-    try {
-        const openaiResponse = await axios.post('https://api.openai.com/v1/completions', {
-            prompt: `Get tech stack, known languages, and learning recommendations for ${username}.`,
-            model: 'text-davinci-003',
-            max_tokens: 100,
-        }, {
-            headers: {
-                ' Key': 'Authorization',
-                'Value': 'Bearer ${apiKey}',
-                'Content-Type': 'application/json'
-            }
-        });
+  try {
+    const response = await openai.createCompletion({
+      model: 'text-davinci-003',
+      prompt: message,
+      temperature: 0.7,
+      max_tokens: 256,
+      top_p: 1,
+      frequency_penalty: 0,
+      presence_penalty: 0,
+    });
 
-        const techInfo = openaiResponse.data.choices[0].text.trim();
-
-        // Extract tech stack, known languages, and learning recommendations from the response
-        const techStack = techInfo.match(/Tech Stack: (.*?)(?:\n|$)/)[1];
-        const knownLanguages = techInfo.match(/Known Languages: (.*?)(?:\n|$)/)[1];
-        const toLearn = techInfo.match(/To Learn: (.*?)(?:\n|$)/)[1];
-
-        res.json({ techStack, knownLanguages, toLearn });
-    } catch (error) {
-        console.error('Error calling OpenAI API:', error);
-        res.status(500).json({ error: 'Failed to fetch tech information' });
-    }
+    res.json({ text: response.data.choices[0].text });
+  } catch (error) {
+    console.error('Error with OpenAI API:', error);
+    res.status(500).json({ error: 'Failed to fetch from OpenAI API' });
+  }
 });
 
 app.listen(port, () => {
-    console.log(`Server running at http://localhost:${port}`);
+  console.log(`Server running on http://localhost:${port}`);
 });
