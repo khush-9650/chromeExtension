@@ -1,54 +1,92 @@
-import React, { useState } from 'react';
-import SearchForm from "./components/SearchForm";
+import React, { useState, useEffect } from 'react';
+import SearchForm from './components/SearchForm';
 import UserRepos from './components/UserRepos';
 
+const apiUrl = 'https://api.github.com'; // Use environment variable for security
+
 function App() {
-  const [user, setUser] = useState("");
+  const [user, setUser] = useState('');
   const [userRepos, setUserRepos] = useState([]);
-  const [techInfo, setTechInfo] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [techStack, setTechStack] = useState([]); // State for detected tech stack
+  const [repoInfo, setRepoInfo] = useState([]); // State for basic repo info (optional)
 
-  async function SearchUser(e) {
-    e.preventDefault();
+  const SearchUser = async () => {
+    if (!user) return; // Prevent unnecessary API calls
+
+    setLoading(true);
+    setError(null);
+
     try {
-      const response = await fetch(`https://api.github.com/users/${user}/repos`);
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
+      const reposResponse = await fetch(`${apiUrl}/users/${user}/repos`);
+      if (!reposResponse.ok) {
+        throw new Error('Network response was not ok (repos)');
       }
-      const data = await response.json();
-      setUserRepos(data);
+      const reposData = await reposResponse.json();
 
-      // Fetch additional information from ChatGPT API
-      const chatGptResponse = await fetch('http://localhost:3000/api/getTechInfo', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username: user }),
-      });
-      if (!chatGptResponse.ok) {
-        throw new Error('ChatGPT API response was not ok');
+      const detectedTechStack = [];
+      const repoInfoList = []; // Initialize repo info array (optional)
+      for (const repo of reposData) {
+        try {
+          // Analyze files in each repo (replace with your implementation)
+          const filesResponse = await fetch(`${apiUrl}/repos/${user}/${repo.name}/contents`);
+          if (!filesResponse.ok) {
+            continue; // Skip on error to avoid breaking the loop
+          }
+          const fileData = await filesResponse.json();
+          fileData.forEach((file) => {
+            if (file.name.endsWith('.js') || file.name.endsWith('.jsx')) {
+              detectedTechStack.push('JavaScript (React possible)');
+            } else if (file.name.endsWith('.html') || file.name.endsWith('.css')) {
+              detectedTechStack.push('Web Development (HTML, CSS)');
+            }
+            // Add logic for other tech stacks
+          });
+
+          // Optional: Fetch basic repo info (e.g., description, language)
+          const repoInfoResponse = await fetch(`${apiUrl}/repos/${user}/${repo.name}`);
+          if (repoInfoResponse.ok) {
+            const repoInfoData = await repoInfoResponse.json();
+            repoInfoList.push({
+              name: repo.name,
+              description: repoInfoData.description || 'No description provided',
+              language: repoInfoData.language || 'N/A',
+            });
+          }
+
+        } catch (error) {
+          console.error(`Error fetching files or info for ${repo.name}`, error);
+        }
       }
-      const techData = await chatGptResponse.json();
-      setTechInfo(techData);
+
+      setUserRepos(reposData);
+      setTechStack(detectedTechStack.filter((item, i, arr) => arr.indexOf(item) === i)); // Remove duplicates
+      setRepoInfo(repoInfoList); // Set repo info (optional)
     } catch (error) {
-      console.error('There was a problem with the fetch operation:', error);
+      setError('There was a problem fetching repositories.');
+      console.error('Error fetching repositories:', error);
+    } finally {
+      setLoading(false);
     }
-  }
+  };
+
+  // useEffect(() => {
+  //   SearchUser();
+  //   console.log(repoInfo); // Call SearchUser on component mount
+  // }, [user]);
 
   return (
     <div className='text-white bg-zinc-800 w-[50vw] h-[100vh] py-[2rem] px-[3rem] overflow-y-auto'>
       <SearchForm user={user} setUser={setUser} SearchUser={SearchUser} />
-      <UserRepos user={user} userRepos={userRepos} />
-      {techInfo && (
-        <div className="tech-info">
-          <h3>Tech Stack:</h3>
-          <p>{techInfo.techStack}</p>
-          <h3>Known Languages:</h3>
-          <p>{techInfo.knownLanguages}</p>
-          <h3>To Learn:</h3>
-          <p>{techInfo.toLearn}</p>
-        </div>
-      )}
+      {loading && <p>Loading...</p>}
+      {error && <p className="error">{error}</p>}
+      <UserRepos
+        user={user}
+        userRepos={userRepos}
+        techStack={techStack}
+        repoInfo={repoInfo} // Pass repo info (optional)
+      />
     </div>
   );
 }

@@ -1,7 +1,13 @@
 import React from 'react';
 import UserRepo from "./UserRepo";
 
-function UserRepos({ user, userRepos }) {
+function UserRepos({ user, userRepos, techStack, repoInfo }) {
+  const learningResources = {
+    'JavaScript (React possible)': [
+      'https://reactjs.org/',
+      'https://www.freecodecamp.org/learn/front-end-development-libraries/react/',
+    ],
+  }
   return (
     <div className='w-full  bg-zinc-500 mt-10 p-[1.5rem] rounded-xl flex flex-col items-center'>
       {user && <h1 className='text-4xl font-bold text-zinc-200'>{user}'s Repos</h1>}
