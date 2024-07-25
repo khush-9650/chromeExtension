@@ -20,6 +20,16 @@ function UserRepos({ user, userRepos, techStack, repoInfo }) {
           <p>No repositories found</p>
         )}
       </div>
+      <div className="text-white mt-5 bg-black w-full p-4 rounded-md">
+        {techStack && techStack.length > 0 ? (
+          techStack.map(techStack => (
+            <UserRepo key={repo.id} {...techStack} />
+          ))
+        ) : (
+          <p>No techStack Scaned</p>
+        )}
+      </div>
+
     </div>
   );
 }
