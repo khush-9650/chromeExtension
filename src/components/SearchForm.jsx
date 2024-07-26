@@ -4,7 +4,8 @@ function SearchForm({ user, setUser, SearchUser }) {
   return (
     <form
       className="flex text-black w-[80%] h-[6.5%] justify-between py-1 px-2 rounded-md bg-white m-auto border-3 border-red-500"
-      onSubmit={SearchUser}
+      onSubmit={(e) =>
+        e.preventDefault()}
     >
       <input
         type="text"
@@ -16,6 +17,7 @@ function SearchForm({ user, setUser, SearchUser }) {
       <button
         className="font-semibold bg-blue-900 px-9 py-1 text-white rounded-md"
         type="submit"
+        onClick={SearchUser}
       >
         Search
       </button>

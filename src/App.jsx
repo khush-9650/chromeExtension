@@ -9,7 +9,7 @@ function App() {
   const [userRepos, setUserRepos] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [techStack, setTechStack] = useState([]); // State for detected tech stack
+  const [techStacks, setTechStacks] = useState([]); // State for detected tech stack
   const [repoInfo, setRepoInfo] = useState([]); // State for basic repo info (optional)
 
   const SearchUser = async () => {
@@ -19,7 +19,7 @@ function App() {
     setError(null);
 
     try {
-      const reposResponse = await fetch(`${apiUrl}/users/${user}/repos`);
+      const reposResponse = await fetch(`https://api.github.com/users/${user}/repos`);
       if (!reposResponse.ok) {
         throw new Error('Network response was not ok (repos)');
       }
@@ -30,7 +30,7 @@ function App() {
       for (const repo of reposData) {
         try {
           // Analyze files in each repo (replace with your implementation)
-          const filesResponse = await fetch(`${apiUrl}/repos/${user}/${repo.name}/contents`);
+          const filesResponse = await fetch(`https://api.github.com/repos/${user}/${repo.name}/contents`);
           if (!filesResponse.ok) {
             continue; // Skip on error to avoid breaking the loop
           }
@@ -61,7 +61,7 @@ function App() {
       }
 
       setUserRepos(reposData);
-      setTechStack(detectedTechStack.filter((item, i, arr) => arr.indexOf(item) === i)); // Remove duplicates
+      setTechStacks(detectedTechStack.filter((item, i, arr) => arr.indexOf(item) === i)); // Remove duplicates
       setRepoInfo(repoInfoList); // Set repo info (optional)
     } catch (error) {
       setError('There was a problem fetching repositories.');
@@ -70,6 +70,7 @@ function App() {
       setLoading(false);
     }
   };
+console.log(userRepos);
 
   // useEffect(() => {
   //   SearchUser();
@@ -84,7 +85,7 @@ function App() {
       <UserRepos
         user={user}
         userRepos={userRepos}
-        techStack={techStack}
+        techStacks={techStacks}
         repoInfo={repoInfo} // Pass repo info (optional)
       />
     </div>

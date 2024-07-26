@@ -1,7 +1,7 @@
 import React from 'react';
 import UserRepo from "./UserRepo";
 
-function UserRepos({ user, userRepos, techStack, repoInfo }) {
+function UserRepos({ user, userRepos, techStacks, repoInfo }) {
   const learningResources = {
     'JavaScript (React possible)': [
       'https://reactjs.org/',
@@ -21,9 +21,9 @@ function UserRepos({ user, userRepos, techStack, repoInfo }) {
         )}
       </div>
       <div className="text-white mt-5 bg-black w-full p-4 rounded-md">
-        {techStack && techStack.length > 0 ? (
-          techStack.map(techStack => (
-            <UserRepo key={repo.id} {...techStack} />
+        {techStacks && techStacks.length > 0 ? (
+          techStacks.map(techStack => (
+            <UserRepo key={techStack.id} {...techStack} />
           ))
         ) : (
           <p>No techStack Scaned</p>
