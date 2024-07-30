@@ -70,12 +70,7 @@ function App() {
       setLoading(false);
     }
   };
-console.log(userRepos);
 
-  // useEffect(() => {
-  //   SearchUser();
-  //   console.log(repoInfo); // Call SearchUser on component mount
-  // }, [user]);
 
   return (
     <div className='text-white bg-zinc-800 w-[50vw] h-[100vh] py-[2rem] px-[3rem] overflow-y-auto'>
